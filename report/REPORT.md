@@ -109,6 +109,20 @@ Nhận xét Phần 3.4: điểm `skills-auto` trên tác vụ học là code 7/1
 
 ## Phụ lục
 
-- Lệnh đã chạy (theo thứ tự):
-- Thử thách mở rộng (nếu có): hướng chọn, kết quả, nhận xét.
+- Lệnh đã chạy (theo thứ tự; `RUN` = `docker run --rm --env-file .env -v <repo>:/lab lab-deepagents-gemini`):
+  1. `docker build -t lab-deepagents .` rồi image con `lab-deepagents-gemini` (`FROM lab-deepagents` + `pip install langchain-google-genai==4.4.0`).
+  2. `RUN pytest` → 29 passed (test_01: 12, test_02: 9, test_03: 6, test_04: 2).
+  3. `RUN python -m lab.runner --condition baseline --tasks learn`
+  4. `RUN python -m lab.runner --condition subagents --tasks learn`
+  5. `python scripts/check_breakdown.py` (máy chủ)
+  6. `RUN python -m lab.curator` (lần 1, 3 skill → xóa), sửa prompt curator, `RUN python -m lab.curator` (lần 2, 2 skill)
+  7. `RUN python -m lab.runner --condition skills-auto --tasks learn` (Phần 3.4)
+  8. `git commit -m "hypotheses"`; `git commit --allow-empty -m "freeze skills" && git tag freeze`; `mv results/skills-auto results/skills-auto-dev`
+  9. `RUN python -m lab.runner --condition baseline --tasks eval`; `... --condition subagents --tasks eval`; `... --condition skills-auto --tasks all`
+  10. `python scripts/verify_freeze.py`; `python -m lab.compare > report/table.md`; `python scripts/check_breakdown.py` (máy chủ)
+- Thử thách mở rộng (nếu có): không thực hiện.
 - Ghi chú khác:
+  - **Sự cố hạ tầng CRLF (đã xử lý, các lần chạy liên quan bị loại).** Kho được clone trên Windows với `core.autocrlf=true`, nên mọi tệp trong `tasks/` bị đổi LF → CRLF khi checkout. Check `tests_not_modified` của `code-learn` so sánh SHA-256 của `tests/test_report.py` với giá trị gốc (LF) nên **luôn thất bại** bất kể tác tử làm gì (đã xác minh: hash chỉ khớp sau khi đổi CRLF → LF). Xử lý: `git config --local core.autocrlf false`, đưa mọi tệp về đúng nội dung trong git (LF; riêng `tasks/data-learn/workspace/sales.csv` được commit với CRLF nên khôi phục bằng `git checkout`), `git diff` xác nhận không còn khác biệt ở `tasks/`, `tests/`, `scripts/`. 6 lần chạy tác vụ học đầu tiên (baseline, subagents) được giữ ở `results-crlf/` để minh bạch và **không dùng** trong báo cáo; mọi lần chạy trong `results/` diễn ra sau khi sửa.
+  - **Mở rộng runner (tùy chọn theo `03_runner.md`, điểm 8):** `run_task` dùng `agent.stream(..., stream_mode="values")` và giữ trạng thái cuối, nên lần chạy bị dừng vì `GraphRecursionError` vẫn có `trace.md` và `tool_calls` (ví dụ `code-learn` baseline: 30 tool call). Lần chạy `code-learn` baseline bị loại (CRLF) dùng bản cũ nên có `tool_calls=0`.
+  - Mô hình Gemini trả `content` dạng danh sách khối (`[{'type': 'text', 'text': ...}]`); `run_task` và `curate_skills` chuyển về chuỗi văn bản trước khi lưu `final_message` và tách skill. `render_trace` (có sẵn, không sửa) in nguyên dạng danh sách nên phần `### Assistant` trong `trace.md` có dạng `[{'type': 'text', ...}]`.
+  - Trong một lần `docker run`, các tác vụ chạy tuần tự trong cùng container; tác tử tự `pip install pandas` ở một tác vụ thì gói đó còn ở tác vụ sau của cùng lệnh (container bị xóa sau mỗi lệnh `--rm`). Đây là một nguồn khác biệt nhỏ giữa các lần chạy.
