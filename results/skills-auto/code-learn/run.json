@@ -1,0 +1,74 @@
+{
+  "task": "code-learn",
+  "condition": "skills-auto",
+  "role": "learn",
+  "error": "GraphRecursionError: Recursion limit of 60 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT",
+  "timestamp": "2026-10-06T15:59:53.428389+00:00",
+  "skills_sha256": "2c05abe66424bc12e9b2aacbc3c2891143b03a846efcd6d5ae59906a5ab1a141",
+  "seconds": 257.2,
+  "tokens": {
+    "input": 200844,
+    "output": 3773,
+    "total": 204617
+  },
+  "tool_calls": 29,
+  "subagent_calls": 0,
+  "skills_read": 0,
+  "skills_modified": false,
+  "final_message": "",
+  "score": 0.7,
+  "passed": 7,
+  "total": 10,
+  "checks": [
+    {
+      "name": "visible_suite_passes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "tests_not_modified",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "parse_price_all_formats",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "other_caller_fixed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "discount_rounds_half_up",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "low_stock_follows_docstring",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "csv_quoting_follows_docstring",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_type_hints",
+      "passed": false,
+      "detail": "RULE: every public function (name not starting with '_') in the package has type annotations on all parameters and on the return value."
+    },
+    {
+      "name": "rule_regression_tests",
+      "passed": false,
+      "detail": "RULE: add tests/test_regressions.py with one test function per bug you fixed (at least 3); the file must pass."
+    },
+    {
+      "name": "rule_changelog",
+      "passed": false,
+      "detail": "RULE: record each fix in CHANGELOG.md under the heading '## Unreleased' as a bullet '- fix(<function name>): <short description>' (at least 3 bullets)."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "task": "data-learn",
+  "condition": "baseline",
+  "role": "learn",
+  "error": null,
+  "timestamp": "2026-10-06T15:46:47.996302+00:00",
+  "skills_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "seconds": 97.5,
+  "tokens": {
+    "input": 64205,
+    "output": 1705,
+    "total": 65910
+  },
+  "tool_calls": 12,
+  "subagent_calls": 0,
+  "skills_read": 0,
+  "skills_modified": false,
+  "final_message": "To clean the sales data, I performed the following steps:\n1.  **Removed duplicate rows**: Identified and removed rows with duplicate `order_id` values.\n2.  **Standardized regions**: Stripped whitespace and capitalized the `region` column to ensure consistent values (e.g., \"North \", \"NORTH\", and \"north\" all became \"North\").\n3.  **Handled missing amounts**: Identified orders with an `amount` of `-999` as missing, counted them, and replaced these values with `NaN` to exclude them from revenue calculations.\n4.  **Parsed dates**: Converted the `date` column into a standardized datetime format, handling both ISO-8601 timestamps and `DD/MM/YYYY` date strings.\n5.  **Calculated metrics**: Computed the required revenue, order counts, and top-performing region based on the cleaned dataset.\n\nThe final results are saved in `workspace/answer.json`.\n\nFiles created/changed:\n- `workspace/analyze.py`\n- `workspace/answer.json`",
+  "score": 0.375,
+  "passed": 3,
+  "total": 8,
+  "checks": [
+    {
+      "name": "north_q1_revenue",
+      "passed": false,
+      "detail": "north_q1_revenue: wrong value (got 2374.22)"
+    },
+    {
+      "name": "north_q1_orders",
+      "passed": false,
+      "detail": "north_q1_orders: wrong value (got 9)"
+    },
+    {
+      "name": "top_region",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "missing_amount_orders",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "duplicate_rows_removed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_money_in_cents",
+      "passed": false,
+      "detail": "RULE: money values in answer.json are integer cents (1606.67 USD is written 160667)."
+    },
+    {
+      "name": "rule_meta_block",
+      "passed": false,
+      "detail": "RULE: answer.json has an object `meta` = {\"source\": <input file name>, \"rows_in\": <number of data rows in the input file, duplicates included>, \"rows_used\": <number of distinct orders with a known amount>}."
+    },
+    {
+      "name": "rule_clean_csv",
+      "passed": false,
+      "detail": "RULE: write workspace/clean.csv with the header order_id,timestamp_utc,region,amount_cents; one row per distinct order with a known amount; timestamp_utc as YYYY-MM-DDTHH:MM:SSZ (UTC); region in canonical spelling (North, South, East, West); amount in integer cents."
+    }
+  ]
+}
